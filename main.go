@@ -22,10 +22,8 @@ func main() {
 	s.cfg = &cfg
 
 	c := commands{}
-
-	c.commands = make(map[string]func(*state, command) error)
-
-	c.commands["login"] = handlerLogin
+	c.init()
+	c.registerAll()
 	
 	db, err := sql.Open("postgres", s.cfg.DbURL)
 
@@ -36,12 +34,7 @@ func main() {
 
 	dbQueries := database.New(db)
 
-	c.commands["register"] = handlerRegister
-
 	s.db = dbQueries
-
-	c.commands["reset"] = handlerReset
-	c.commands["users"] = handlerGetUsers
 
 	args := os.Args
 

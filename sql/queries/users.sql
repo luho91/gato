@@ -13,9 +13,13 @@ RETURNING *;
 
 SELECT * FROM users WHERE name = $1;
 
+-- name: GetUserByUUID :one
+
+SELECT * FROM users WHERE id = $1;
+
 -- name: DeleteAllUsers :exec
 
-TRUNCATE TABLE users;
+TRUNCATE TABLE users CASCADE;
 
 -- name: GetUsers :many
 

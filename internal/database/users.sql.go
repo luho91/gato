@@ -50,7 +50,7 @@ func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, e
 
 const deleteAllUsers = `-- name: DeleteAllUsers :exec
 
-TRUNCATE TABLE users
+TRUNCATE TABLE users CASCADE
 `
 
 func (q *Queries) DeleteAllUsers(ctx context.Context) error {
@@ -65,6 +65,23 @@ SELECT id, created_at, updated_at, name FROM users WHERE name = $1
 
 func (q *Queries) GetUser(ctx context.Context, name string) (User, error) {
 	row := q.db.QueryRowContext(ctx, getUser, name)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Name,
+	)
+	return i, err
+}
+
+const getUserByUUID = `-- name: GetUserByUUID :one
+
+SELECT id, created_at, updated_at, name FROM users WHERE id = $1
+`
+
+func (q *Queries) GetUserByUUID(ctx context.Context, id uuid.UUID) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUserByUUID, id)
 	var i User
 	err := row.Scan(
 		&i.ID,
