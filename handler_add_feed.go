@@ -8,15 +8,9 @@ import (
 	"time"
 )
 
-func handlerAddFeed(s *state, cmd command) error {
+func handlerAddFeed(s *state, cmd command, user database.User) error {
 	if len(cmd.args) < 2 {
 		return errors.New("2 args required: name and url (separated by space)")
-	}
-
-	user, err := s.db.GetUser(context.Background(), s.cfg.CurrentUser)
-
-	if err != nil {
-		return err
 	}
 
 	name := cmd.args[0]
@@ -30,7 +24,7 @@ func handlerAddFeed(s *state, cmd command) error {
 	p.Url = url
 	p.UserID = user.ID
 
-	_, err = s.db.CreateFeed(context.Background(), p)
+	_, err := s.db.CreateFeed(context.Background(), p)
 	if err != nil {
 		return err
 	}
