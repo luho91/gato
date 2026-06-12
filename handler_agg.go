@@ -48,7 +48,17 @@ func scrapeFeeds(s *state, userID uuid.UUID) error {
 	}
 
 	for _, i := range feed.Channel.Item {
-		fmt.Printf("%v\n", i.Title)
+		p2 := database.CreatePostParams{}
+		p2.ID = uuid.New()
+		p2.CreatedAt = time.Now()
+		p2.UpdatedAt = time.Now()
+		p2.Title = i.Title
+		p2.Url = f.Url
+		p2.FeedID = f.ID
+
+		p, _ := s.db.CreatePost(context.Background(), p2)
+
+		fmt.Printf("%v\n", p.Title)
 	}
 
 	fmt.Printf("Fetched %v\n", f.Url)
